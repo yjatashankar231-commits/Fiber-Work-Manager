@@ -1,453 +1,106 @@
-// =========================
-// Fiber Work Manager Pro
-// =========================
-
-let records = JSON.parse(localStorage.getItem("records")) || [];
-
-// ---------- Open Forms ----------
-
-function openTravel(){
-document.getElementById("content").innerHTML=`
-
-<div class="form-card">
-
-<h2>🚗 Travel</h2>
-
-<input id="from" placeholder="From Location">
-
-<input id="to" placeholder="To Location">
-
-<input id="travelKmInput" type="number" placeholder="Travel KM">
-
-<textarea id="travelRemark" placeholder="Remarks"></textarea>
-
-<button class="save-btn" onclick="saveTravel()">Save Travel</button>
-
-</div>
-
-`;
-}
-
-function openInstallation(){
-
-document.getElementById("content").innerHTML=`
-
-<div class="form-card">
-
-<h2>🛠 Installation</h2>
-
-<input id="customer" placeholder="Customer Name">
-
-<input id="mobile" placeholder="Mobile Number">
-
-<input id="address" placeholder="Address">
-
-<input id="flat" placeholder="Flat No">
-
-<input id="society" placeholder="Society Name">
-
-<select id="company">
-
-<option>Airtel</option>
-
-<option>Jio</option>
-
-<option>GTPL</option>
-
-<option>BSNL</option>
-
-<option>ACT</option>
-
-<option>Other</option>
-
-</select>
-
-<input id="ra" placeholder="RA Number">
-
-<input id="power" placeholder="Power Reading">
-
-<textarea id="remark" placeholder="Remarks"></textarea>
-
-<button class="save-btn" onclick="saveInstallation()">
-
-Save Installation
-
-</button>
-
-</div>
-
-`;
-
-}
-
-function openSR(){
-
-document.getElementById("content").innerHTML=`
-
-<div class="form-card">
-
-<h2>📞 SR</h2>
-
-<input id="srNumber" placeholder="SR Number">
-
-<input id="customer" placeholder="Customer Name">
-
-<input id="mobile" placeholder="Mobile">
-
-<select id="company">
-
-<option>Airtel</option>
-
-<option>Jio</option>
-
-<option>GTPL</option>
-
-<option>BSNL</option>
-
-</select>
-
-<textarea id="remark" placeholder="Complaint Details"></textarea>
-
-<button class="save-btn" onclick="saveSR()">
-
-Save SR
-
-</button>
-
-</div>
-
-`;
-
-}
-// ================= SAVE FUNCTIONS =================
-
-function saveTravel() {
-
-let row = {
-type: "Travel",
-date: new Date().toLocaleString(),
-from: document.getElementById("from").value,
-to: document.getElementById("to").value,
-km: document.getElementById("travelKmInput").value,
-remark: document.getElementById("travelRemark").value
-};
-
-records.push(row);
-
-localStorage.setItem("records", JSON.stringify(records));
-
-alert("🚗 Travel Saved");
-
-updateDashboard();
-
-}
-
-function saveInstallation() {
-
-let row = {
-type: "Installation",
-date: new Date().toLocaleString(),
-customer: customer.value,
-mobile: mobile.value,
-address: address.value,
-flat: flat.value,
-society: society.value,
-company: company.value,
-ra: ra.value,
-power: power.value,
-remark: remark.value
-};
-
-records.push(row);
-
-localStorage.setItem("records", JSON.stringify(records));
-
-alert("🛠 Installation Saved");
-
-updateDashboard();
-
-}
-
-function saveSR() {
-
-let row = {
-type: "SR",
-date: new Date().toLocaleString(),
-srNumber: srNumber.value,
-customer: customer.value,
-mobile: mobile.value,
-company: company.value,
-remark: remark.value
-};
-
-records.push(row);
-
-localStorage.setItem("records", JSON.stringify(records));
-
-alert("📞 SR Saved");
-
-updateDashboard();
-
-}
-
-// ================= DASHBOARD =================
-
-function updateDashboard() {
-
-document.getElementById("installationCount").innerHTML =
-records.filter(x => x.type === "Installation").length;
-
-document.getElementById("srCount").innerHTML =
-records.filter(x => x.type === "SR").length;
-
-document.getElementById("visitCount").innerHTML =
-records.filter(x => x.type === "Site Visit").length;
-
-let km = 0;
-
-records.forEach(r => {
-
-if (r.km) km += Number(r.km);
-
-});
-
-document.getElementById("travelKm").innerHTML = km;
-
-}
-
-updateDashboard();
-// ================= GPS =================
-
-function getCurrentLocation(callback){
-
-if(!navigator.geolocation){
-alert("GPS Not Supported");
-return;
-}
-
-navigator.geolocation.getCurrentPosition(function(pos){
-
-callback(
-pos.coords.latitude,
-pos.coords.longitude
-);
-
-},function(err){
-
-alert("GPS Error : "+err.message);
-
-},{
-enableHighAccuracy:true,
-timeout:10000,
-maximumAge:0
-});
-
-}
-
-// ================= CAMERA =================
-
-function openCamera(){
-
-let input=document.createElement("input");
-
-input.type="file";
-
-input.accept="image/*";
-
-input.capture="environment";
-
-input.onchange=function(){
-
-if(this.files.length){
-
-alert("📷 Photo Selected : "+this.files[0].name);
-
-}
-
-}
-
-input.click();
-
-}
-
-// ================= SITE VISIT =================
-
-function openVisit(){
-
-document.getElementById("content").innerHTML=`
-
-<div class="form-card">
-
-<h2>🏢 Site Visit</h2>
-
-<input id="siteName" placeholder="Site Name">
-
-<input id="engineer" placeholder="Engineer Name">
-
-<input id="purpose" placeholder="Purpose">
-
-<textarea id="visitRemark"
-placeholder="Remarks"></textarea>
-
-<button class="save-btn"
-onclick="saveVisit()">
-
-Save Visit
-
-</button>
-
-</div>
-
-`;
-
-}
-
-function saveVisit(){
-
-records.push({
-
-type:"Site Visit",
-
-date:new Date().toLocaleString(),
-
-site:siteName.value,
-
-engineer:engineer.value,
-
-purpose:purpose.value,
-
-remark:visitRemark.value
-
-});
-
-localStorage.setItem("records",
-JSON.stringify(records));
-
-alert("🏢 Site Visit Saved");
-
-updateDashboard();
-
-}
-
-// ================= SITE RESTORE =================
-
-function openRestore(){
-
-document.getElementById("content").innerHTML=`
-
-<div class="form-card">
-
-<h2>🔧 Site Restore</h2>
-
-<input id="restoreSite"
-placeholder="Site Name">
-
-<input id="restoreCompany"
-placeholder="ISP Company">
-
-<input id="fault"
-placeholder="Fault">
-
-<textarea id="restoreRemark"
-placeholder="Remarks"></textarea>
-
-<button class="save-btn"
-onclick="saveRestore()">
-
-Save Restore
-
-</button>
-
-</div>
-
-`;
-
-}
-
-function saveRestore(){
-
-records.push({
-
-type:"Site Restore",
-
-date:new Date().toLocaleString(),
-
-site:restoreSite.value,
-
-company:restoreCompany.value,
-
-fault:fault.value,
-
-remark:restoreRemark.value
-
-});
-
-localStorage.setItem("records",
-JSON.stringify(records));
-
-alert("🔧 Site Restore Saved");
-
-updateDashboard();
-
-}
-
-// ================= REPORT =================
-
-function showReport(){
-
-let html="<h2>Daily Report</h2>";
-
-records.forEach(function(r){
-
-html+=`
-
-<div class="card">
-
-<b>${r.type}</b><br>
-
-${r.customer||r.site||""}<br>
-
-${r.company||""}<br>
-
-${r.date}
-
-</div>
-
-`;
-
-});
-
-document.getElementById("content").innerHTML=html;
-
-}
-
-// ================= EXPORT CSV =================
-
-function exportExcel(){
-
-let csv="Type,Date,Customer,Company,Site,KM\\n";
-
-records.forEach(function(r){
-
-csv+=`${r.type},
-${r.date},
-${r.customer||""},
-${r.company||""},
-${r.site||""},
-${r.km||""}
-\\n`;
-
-});
-
-let blob=new Blob([csv],
-{type:"text/csv"});
-
-let a=document.createElement("a");
-
-a.href=URL.createObjectURL(blob);
-
-a.download="Fiber_Work_Report.csv";
-
-a.click();
-
-}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service & Installation Log System</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body class="bg-gray-50 font-sans text-gray-800">
+
+    <div class="flex h-screen overflow-hidden">
+        
+        <div class="w-64 bg-slate-900 text-white flex flex-col justify-between hidden md:flex">
+            <div class="p-5">
+                <h1 class="text-xl font-bold tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-network-wired text-indigo-400"></i> FieldOps Pro
+                </h1>
+                <nav class="mt-10 space-y-3">
+                    <a href="#" class="flex items-center gap-3 px-4 py-3 bg-indigo-600 text-white rounded-lg transition">
+                        <i class="fa-solid fa-pen-to-square"></i> Manual Entry
+                    </a>
+                </nav>
+            </div>
+            <div class="p-5 border-t border-slate-800 text-xs text-slate-400">
+                Logged in as Field Executive
+            </div>
+        </div>
+
+        <div class="flex-1 flex flex-col overflow-y-auto">
+            
+            <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
+                <h2 class="text-xl font-semibold text-gray-800">New Activity Log Entry</h2>
+                <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 shadow transition cursor-pointer">
+                    <i class="fa-solid fa-file-excel"></i> Export All to Excel
+                </button>
+            </header>
+
+            <main class="p-6 max-w-5xl w-full mx-auto space-y-6">
+                
+                <form id="logForm" onsubmit="handleFormSubmit(event)" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6">
+                    
+                    <div>
+                        <h3 class="text-md font-semibold text-indigo-600 border-b border-gray-100 pb-2 mb-4">
+                            <i class="fa-solid fa-briefcase mr-1"></i> 1. Work & Company Details
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Installation Company Name</label>
+                                <input type="text" id="installCompany" required placeholder="Enter company doing installation" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Complaint/Client Company Name</label>
+                                <input type="text" id="complaintCompany" required placeholder="Enter client/complaint company" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-md font-semibold text-indigo-600 border-b border-gray-100 pb-2 mb-4">
+                            <i class="fa-solid fa-file-lines mr-1"></i> 2. Manual Write-ups
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Installation Manual Notes / Details</label>
+                                <textarea id="installManual" rows="4" required placeholder="Type all installation steps, hardware used, or manual details here..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Site Restore Manual Notes / Details</label>
+                                <textarea id="restoreManual" rows="4" required placeholder="Type site restoration process, link status, or manual logs here..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-md font-semibold text-indigo-600 border-b border-gray-100 pb-2 mb-4">
+                            <i class="fa-solid fa-route mr-1"></i> 3. Travel Log (Side to Side)
+                        </h3>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">From (Start Side/Location)</label>
+                                <input type="text" id="travelFrom" required placeholder="e.g., Side A / Office" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">To (Destination Side/Location)</label>
+                                <input type="text" id="travelTo" required placeholder="e.g., Side B / Client Site" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Distance Traveled (Kilometers)</label>
+                                <div class="relative">
+                                    <input type="number" id="distanceKm" step="0.1" required placeholder="0.0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 pr-10">
+                                    <span class="absolute right-3 top-2.5 text-gray-400 text-sm font-medium">KM</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div>
+                        <h3 class="text-md font-semibold text-indigo-600 border-b border-gray-100 pb-2 mb-4">
+                            <i class="fa-solid fa-camera mr-1"></i> 4. Media Upload
+                        </h3>
+                        <div class="w-full">
+                            <label class="block text-sm font-medium text-gray-700 mb-1">Upload Site / Work Photos</label>
+                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-gray-50 transition relative">
+                                <input type="file" id="sitePhotos" multiple accept="image/*" class="absolute inset-0 w
