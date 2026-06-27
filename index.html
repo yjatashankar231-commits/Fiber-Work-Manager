@@ -76,6 +76,7 @@ document.querySelector(".card").innerHTML = "❌ GPS Permission Denied";
         localStorage.setItem("lastLon", lon);
 
         alert("📍 Travel Started");
+      localStorage.setItem("startTime", new Date().toLocaleString());
     });
 }
 </script>
