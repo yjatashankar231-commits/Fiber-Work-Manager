@@ -97,6 +97,19 @@ document.querySelector(".card").innerHTML = "❌ GPS Permission Denied";
 
   });
   }
+  function showReport() {
+  let startTime = localStorage.getItem("startTime");
+  let endTime = localStorage.getItem("endTime");
+  let startLat = localStorage.getItem("lastLat");
+  let startLon = localStorage.getItem("lastLon");
+
+  alert(
+    "📊 Daily Report\n\n" +
+    "🕒 Start: " + startTime +
+    "\n🕒 End: " + endTime +
+    "\n📍 Start GPS: " + startLat + "," + startLon
+  );
+  }
 </script>
 </body>
 </html>
