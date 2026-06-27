@@ -1,13 +1,14 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+
 <title>Fiber Work Manager</title>
 
-<meta name="theme-color" content="#1565C0">
-
 <style>
+
 *{
 margin:0;
 padding:0;
@@ -16,165 +17,274 @@ font-family:Arial,sans-serif;
 }
 
 body{
-background:#eef3f9;
-padding-bottom:90px;
+background:#edf3fb;
 }
 
 .header{
+
 background:linear-gradient(135deg,#1565C0,#42A5F5);
-padding:20px;
-color:#fff;
+
+padding:25px;
+
+color:white;
+
 border-radius:0 0 25px 25px;
+
 text-align:center;
-box-shadow:0 5px 15px rgba(0,0,0,.2);
+
 }
 
 .header h1{
+
 font-size:26px;
+
 }
 
 .header p{
+
 margin-top:5px;
-font-size:15px;
+
 opacity:.9;
+
 }
 
 .dashboard{
+
 display:grid;
+
 grid-template-columns:repeat(2,1fr);
+
 gap:12px;
+
 padding:15px;
+
 }
 
 .card{
-background:#fff;
+
+background:white;
+
+padding:18px;
+
 border-radius:18px;
-padding:15px;
-text-align:center;
+
 box-shadow:0 3px 10px rgba(0,0,0,.15);
+
+text-align:center;
+
 }
 
 .card h2{
+
 font-size:28px;
-margin-bottom:5px;
+
+color:#1565C0;
+
 }
 
 .card p{
-font-size:15px;
+
+margin-top:8px;
+
+font-size:14px;
+
 color:#666;
+
 }
 
 .section{
+
 padding:15px;
+
 }
 
 button{
+
 width:100%;
+
 padding:16px;
+
 margin-top:12px;
-border:none;
-border-radius:15px;
+
 font-size:18px;
+
 font-weight:bold;
+
+border:none;
+
+border-radius:15px;
+
 background:#1976D2;
+
 color:white;
+
 }
 
 button:active{
+
 transform:scale(.98);
+
+}
+
+.gps{
+
+background:white;
+
+margin:15px;
+
+padding:18px;
+
+border-radius:18px;
+
+box-shadow:0 3px 10px rgba(0,0,0,.15);
+
 }
 
 .bottom{
+
 position:fixed;
+
 bottom:0;
+
 left:0;
+
 width:100%;
+
 background:white;
+
 display:flex;
+
 justify-content:space-around;
+
 padding:12px;
-box-shadow:0 -3px 10px rgba(0,0,0,.15);
+
+box-shadow:0 -3px 10px rgba(0,0,0,.2);
+
 }
 
 .bottom div{
+
 text-align:center;
-font-size:14px;
+
+font-size:13px;
+
 font-weight:bold;
+
 color:#1565C0;
+
 }
+
 </style>
+
 </head>
 
 <body>
 
 <div class="header">
+
 <h1>📡 Fiber Work Manager</h1>
+
 <p>Professional Field Engineer App</p>
+
 </div>
 
 <div class="dashboard">
 
 <div class="card">
+
 <h2 id="installCount">0</h2>
+
 <p>Installation</p>
+
 </div>
 
 <div class="card">
+
 <h2 id="srCount">0</h2>
+
 <p>SR</p>
+
 </div>
 
 <div class="card">
+
 <h2 id="travelKm">0 KM</h2>
+
 <p>Travel</p>
+
 </div>
 
 <div class="card">
+
 <h2 id="todayWork">0</h2>
+
 <p>Today's Work</p>
+
 </div>
+
+</div>
+
+<div class="gps">
+
+<h3>📍 Live GPS</h3>
+
+<p id="gpsText">
+
+Waiting for GPS...
+
+</p>
 
 </div>
 
 <div class="section">
- <button onclick="startTravel()">🚗 Start Travel</button>
 
-<button onclick="finishTravel()">🛠 Installation</button>
+<button onclick="showInstallation()">
 
-<button onclick="saveSR()">📞 SR</button>
+🛠 Installation
 
-<button onclick="saveVisit()">🏢 Site Visit</button>
+</button>
 
-<button onclick="saveRestore()">🔧 Site Restore</button>
+<button onclick="showSR()">
 
-<button onclick="uploadPhoto()">📷 Upload Photo</button>
+📞 SR
 
-<button onclick="showReport()">📊 Daily Report</button>
+</button>
 
-<div class="card" style="margin-top:20px">
-<h3>📍 Live GPS</h3>
-<p id="gpsCard">Waiting for GPS...</p>
-</div>
+<button onclick="showVisit()">
 
-<div class="bottom">
+🏢 Site Visit
 
-<div onclick="startTravel()">
-🚗<br>Travel
-</div>
+</button>
 
-<div onclick="finishTravel()">
-🛠<br>Install
-</div>
+<button onclick="showRestore()">
 
-<div onclick="uploadPhoto()">
-📷<br>Camera
-</div>
+🔧 Site Restore
 
-<div onclick="showReport()">
-📊<br>Report
-</div>
+</button>
 
-</div>
+<button onclick="showTravel()">
+
+🚗 Travel
+
+</button>
+
+<button onclick="showReport()">
+
+📊 Daily Report
+
+</button>
+
+<button onclick="exportExcel()">
+
+📄 Export Excel
+
+</button>
+
+<button onclick="uploadPhoto()">
+
+📷 Upload Photo
+
+</button>
 
 <input
 type="file"
@@ -182,147 +292,332 @@ id="photoInput"
 accept="image/*"
 capture="environment"
 style="display:none">
+<!-- ================= INSTALLATION FORM ================= -->
 
-<script>
- // ===== GPS =====
-function updateGPS(){
- navigator.geolocation.getCurrentPosition(function(pos){
-   document.getElementById("gpsCard").innerHTML =
-   "📍 " + pos.coords.latitude.toFixed(6) +
-   "<br>📍 " + pos.coords.longitude.toFixed(6);
- });
+<div id="installationForm" style="display:none;padding:15px;">
+
+<h2>🛠 Installation</h2>
+
+<input type="text" id="instCustomer" placeholder="Customer Name">
+
+<input type="tel" id="instMobile" placeholder="Mobile Number">
+
+<input type="text" id="instAddress" placeholder="Address">
+
+<input type="text" id="instSociety" placeholder="Society Name">
+
+<input type="text" id="instFlat" placeholder="Flat No">
+
+<input type="text" id="instRA" placeholder="RA Number">
+
+<input type="text" id="instISP" placeholder="ISP Company">
+
+<input type="text" id="instPower" placeholder="Power Reading">
+
+<textarea id="instRemark" placeholder="Remarks"></textarea>
+
+<button onclick="saveInstallation()">💾 Save Installation</button>
+
+</div>
+
+<!-- ================= SR FORM ================= -->
+
+<div id="srForm" style="display:none;padding:15px;">
+
+<h2>📞 SR</h2>
+
+<input type="text" id="srCustomer" placeholder="Customer Name">
+
+<input type="tel" id="srMobile" placeholder="Mobile Number">
+
+<input type="text" id="srNumber" placeholder="SR Number">
+
+<input type="text" id="srISP" placeholder="ISP Company">
+
+<input type="text" id="srProblem" placeholder="Complaint">
+
+<textarea id="srRemark" placeholder="Remarks"></textarea>
+
+<button onclick="saveSR()">💾 Save SR</button>
+
+</div>
+
+<!-- ================= SITE VISIT ================= -->
+
+<div id="visitForm" style="display:none;padding:15px;">
+
+<h2>🏢 Site Visit</h2>
+
+<input type="text" id="visitSite" placeholder="Site Name">
+
+<input type="text" id="visitAddress" placeholder="Address">
+
+<input type="text" id="visitEngineer" placeholder="Engineer Name">
+
+<textarea id="visitRemark" placeholder="Remarks"></textarea>
+
+<button onclick="saveVisit()">💾 Save Site Visit</button>
+
+</div>
+
+<!-- ================= SITE RESTORE ================= -->
+
+<div id="restoreForm" style="display:none;padding:15px;">
+
+<h2>🔧 Site Restore</h2>
+
+<input type="text" id="restoreSite" placeholder="Site Name">
+
+<input type="text" id="restoreISP" placeholder="ISP Company">
+
+<input type="text" id="restoreFault" placeholder="Fault">
+
+<textarea id="restoreRemark" placeholder="Remarks"></textarea>
+
+<button onclick="saveRestore()">💾 Save Restore</button>
+
+</div>
+
+<!-- ================= TRAVEL ================= -->
+
+<div id="travelForm" style="display:none;padding:15px;">
+
+<h2>🚗 Travel</h2>
+
+<input type="text" id="travelFrom" placeholder="From">
+
+<input type="text" id="travelTo" placeholder="To">
+
+<input type="number" id="travelKmInput" placeholder="KM">
+
+<button onclick="startTravel()">▶ Start Travel</button>
+
+<button onclick="finishTravel()">⏹ End Travel</button>
+
+</div>
+
+<style>
+
+input,
+textarea,
+select{
+
+width:100%;
+
+padding:14px;
+
+margin-top:10px;
+
+border-radius:12px;
+
+border:1px solid #ccc;
+
+font-size:16px;
+
 }
+
+textarea{
+
+height:90px;
+
+resize:none;
+
+}
+
+</style>
+<script>
+
+// Dashboard Count
+let installation = 0;
+let sr = 0;
+let visit = 0;
+let restore = 0;
+
+// Hide All Forms
+function hideForms(){
+document.getElementById("installationForm").style.display="none";
+document.getElementById("srForm").style.display="none";
+document.getElementById("visitForm").style.display="none";
+document.getElementById("restoreForm").style.display="none";
+document.getElementById("travelForm").style.display="none";
+}
+
+// Open Forms
+function showInstallation(){
+hideForms();
+document.getElementById("installationForm").style.display="block";
+}
+
+function showSR(){
+hideForms();
+document.getElementById("srForm").style.display="block";
+}
+
+function showVisit(){
+hideForms();
+document.getElementById("visitForm").style.display="block";
+}
+
+function showRestore(){
+hideForms();
+document.getElementById("restoreForm").style.display="block";
+}
+
+function showTravel(){
+hideForms();
+document.getElementById("travelForm").style.display="block";
+}
+
+// GPS
+function updateGPS(){
+
+navigator.geolocation.getCurrentPosition(function(pos){
+
+document.getElementById("gpsText").innerHTML=
+
+"📍 Latitude : "+pos.coords.latitude.toFixed(6)+"<br>"+
+
+"📍 Longitude : "+pos.coords.longitude.toFixed(6);
+
+});
+
+}
+
 updateGPS();
 
-// ===== Travel Start =====
+// Save Installation
+function saveInstallation(){
+
+installation
+// ===== Travel =====
+
+let startLat = 0;
+let startLng = 0;
+
 function startTravel(){
- navigator.geolocation.getCurrentPosition(function(pos){
 
-   localStorage.setItem("startLat",pos.coords.latitude);
-   localStorage.setItem("startLon",pos.coords.longitude);
-   localStorage.setItem("startTime",new Date().toLocaleString());
+navigator.geolocation.getCurrentPosition(function(pos){
 
-   alert("🚗 Travel Started");
+startLat = pos.coords.latitude;
+startLng = pos.coords.longitude;
 
- });
+localStorage.setItem("startLat",startLat);
+localStorage.setItem("startLng",startLng);
+localStorage.setItem("startTime",new Date().toLocaleString());
+
+alert("🚗 Travel Started");
+
+});
 
 }
 
-// ===== Installation =====
 function finishTravel(){
 
- navigator.geolocation.getCurrentPosition(function(pos){
+navigator.geolocation.getCurrentPosition(function(pos){
 
- localStorage.setItem("endLat",pos.coords.latitude);
- localStorage.setItem("endLon",pos.coords.longitude);
- localStorage.setItem("endTime",new Date().toLocaleString());
+let endLat = pos.coords.latitude;
+let endLng = pos.coords.longitude;
 
- let total=Number(localStorage.getItem("install"))||0;
- total++;
+localStorage.setItem("endLat",endLat);
+localStorage.setItem("endLng",endLng);
+localStorage.setItem("endTime",new Date().toLocaleString());
 
- localStorage.setItem("install",total);
-
- document.getElementById("installCount").innerHTML=total;
-
- alert("✅ Installation Completed");
-
- });
-
-}
-
-// ===== SR =====
-function saveSR(){
-
- let sr=Number(localStorage.getItem("sr"))||0;
-
- sr++;
-
- localStorage.setItem("sr",sr);
-
- document.getElementById("srCount").innerHTML=sr;
-
- alert("📞 SR Saved");
-
-}
- // ===== Site Visit =====
-function saveVisit(){
-
-let visit=Number(localStorage.getItem("visit"))||0;
-
-visit++;
-
-localStorage.setItem("visit",visit);
-
-alert("🏢 Site Visit Saved");
-
-}
-
-// ===== Site Restore =====
-function saveRestore(){
-
-let restore=Number(localStorage.getItem("restore"))||0;
-
-restore++;
-
-localStorage.setItem("restore",restore);
-
-alert("🔧 Site Restore Saved");
-
-}
-
-// ===== Upload Photo =====
-function uploadPhoto(){
-document.getElementById("photoInput").click();
-}
-
-document.getElementById("photoInput").onchange=function(){
-
-if(this.files.length){
-
-alert("📷 Photo Uploaded Successfully");
-
-}
-
-};
-
-// ===== Daily Report =====
-function showReport(){
-
-alert(
-
-"📊 DAILY REPORT\n\n"+
-
-"🛠 Installation : "+(localStorage.getItem("install")||0)+
-
-"\n📞 SR : "+(localStorage.getItem("sr")||0)+
-
-"\n🏢 Site Visit : "+(localStorage.getItem("visit")||0)+
-
-"\n🔧 Site Restore : "+(localStorage.getItem("restore")||0)+
-
-"\n\n🕒 Start : "+(localStorage.getItem("startTime")||"-")+
-
-"\n🕒 End : "+(localStorage.getItem("endTime")||"-")+
-
-"\n\n📍 Start GPS : "+(localStorage.getItem("startLat")||"-")+","+ (localStorage.getItem("startLon")||"-")+
-
-"\n📍 End GPS : "+(localStorage.getItem("endLat")||"-")+","+ (localStorage.getItem("endLon")||"-")
-
+let km = calculateDistance(
+startLat,
+startLng,
+endLat,
+endLng
 );
 
+document.getElementById("travelKm").innerHTML =
+km.toFixed(2)+" KM";
+
+localStorage.setItem("travelKm",km.toFixed(2));
+
+alert("✅ Travel Completed\n\n"+km.toFixed(2)+" KM");
+
+});
+
 }
+
+// Distance Formula
+
+function calculateDistance(lat1,lon1,lat2,lon2){
+
+let R = 6371;
+
+let dLat = (lat2-lat1)*Math.PI/180;
+// ===== Export CSV (Excel) =====
+
+function exportExcel(){
+
+let csv =
+"Work Type,Customer,Mobile,Company,Date,KM\n";
+
+csv +=
+"Installation,,," +
+(localStorage.getItem("travelKm")||0) +
+"," +
+new Date().toLocaleDateString() +
+"\n";
+
+let blob = new Blob([csv],{type:"text/csv"});
+
+let a = document.createElement("a");
+
+a.href = URL.createObjectURL(blob);
+
+a.download = "Fiber_Work_Report.csv";
+
+a.click();
+
+}
+
+// ===== Auto Restore =====
 
 window.onload=function(){
 
-document.getElementById("installCount").innerHTML=localStorage.getItem("install")||0;
-
-document.getElementById("srCount").innerHTML=localStorage.getItem("sr")||0;
+document.getElementById("travelKm").innerHTML =
+(localStorage.getItem("travelKm")||0)+" KM";
 
 updateGPS();
 
 };
 
+// ===== Bottom Navigation =====
+
+hideForms();
+
 </script>
+
+<div class="bottom">
+
+<div onclick="showInstallation()">
+🛠<br>
+Install
+</div>
+
+<div onclick="showSR()">
+📞<br>
+SR
+</div>
+
+<div onclick="showVisit()">
+🏢<br>
+Visit
+</div>
+
+<div onclick="showTravel()">
+🚗<br>
+Travel
+</div>
+
+<div onclick="showReport()">
+📊<br>
+Report
+</div>
+
+</div>
 
 </body>
 </html>
