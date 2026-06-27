@@ -47,7 +47,7 @@ color:white;
 
 <div class="card">📍 GPS Location</div>
 
-<button>🚗 Travel</button>
+<button onclick="startTravel()">🚗 Travel</button>
 
 <button>🛠 Installation</button>
 
@@ -67,6 +67,17 @@ document.querySelector(".card").innerHTML =
 }, function(){
 document.querySelector(".card").innerHTML = "❌ GPS Permission Denied";
 });
+  function startTravel() {
+    navigator.geolocation.getCurrentPosition(function(pos){
+        let lat = pos.coords.latitude;
+        let lon = pos.coords.longitude;
+
+        localStorage.setItem("lastLat", lat);
+        localStorage.setItem("lastLon", lon);
+
+        alert("📍 Travel Started");
+    });
+}
 </script>
 </body>
 </html>
