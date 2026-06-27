@@ -1,96 +1,45 @@
-
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Fiber Work Manager</title>
-<style>
-body{font-family:Arial;background:#eef4ff;margin:0;padding:15px}
-h1{text-align:center;color:#1565c0}
-.card{background:#fff;padding:15px;border-radius:12px;margin:10px 0;box-shadow:0 2px 8px #ccc}
-button{width:100%;padding:14px;margin:8px 0;border:none;border-radius:10px;background:#1976d2;color:#fff}
-input,textarea,select{width:100%;padding:10px;margin:6px 0;border:1px solid #bbb;border-radius:8px}
-.section{display:none}
-</style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fiber Work Manager Pro</title>
+<link rel="stylesheet" href="style.css">
 </head>
 <body>
-<h1>📡 Fiber Work Manager</h1>
-
-<div class="card" id="gps">GPS Loading...</div>
-
-<button onclick="show('travel')">🚗 Travel</button>
-<button onclick="show('install')">🛠 Installation</button>
-<button onclick="show('sr')">📞 SR</button>
-<button onclick="show('visit')">🏢 Site Visit</button>
-<button onclick="show('restore')">🔧 Site Restore</button>
-<button onclick="document.getElementById('photo').click()">📷 Upload Photo</button>
-<button onclick="report()">📊 Daily Report</button>
-
-<input id="photo" type="file" accept="image/*" capture="environment" style="display:none">
-
-<div id="travel" class="section card">
-<h3>Travel Entry</h3>
-<input placeholder="From">
-<input placeholder="To">
-<input placeholder="Purpose">
-<input placeholder="KM (manual or auto)">
-<button onclick="alert('Travel Saved')">Save Travel</button>
+<header class="header">
+<h1>📡 Fiber Work Manager Pro</h1>
+<p>Field Engineer Dashboard</p>
+</header>
+<div class="dashboard">
+<div class="card">
+<h3>Installation</h3>
+<span id="installationCount">0</span>
 </div>
-
-<div id="install" class="section card">
-<h3>Installation Entry</h3>
-<input placeholder="Customer Name">
-<input placeholder="Mobile">
-<input placeholder="Address">
-<input placeholder="Flat / House">
-<input placeholder="ISP Company">
-<input placeholder="RA Number">
-<input placeholder="Power Reading">
-<textarea placeholder="Remarks"></textarea>
-<button onclick="alert('Installation Saved')">Save Installation</button>
+<div class="card">
+<h3>SR</h3>
+<span id="srCount">0</span>
 </div>
-
-<div id="sr" class="section card">
-<h3>SR Entry</h3>
-<input placeholder="SR Number">
-<input placeholder="Customer Name">
-<input placeholder="Mobile">
-<input placeholder="ISP Company">
-<textarea placeholder="Complaint"></textarea>
-<button onclick="alert('SR Saved')">Save SR</button>
-</div>
-
-<div id="visit" class="section card">
+<div class="card">
 <h3>Site Visit</h3>
-<input placeholder="Site Name">
-<input placeholder="Engineer">
-<textarea placeholder="Remarks"></textarea>
-<button onclick="alert('Visit Saved')">Save Visit</button>
+<span id="visitCount">0</span>
 </div>
-
-<div id="restore" class="section card">
-<h3>Site Restore</h3>
-<input placeholder="Site Name">
-<input placeholder="ISP Company">
-<input placeholder="Fault">
-<textarea placeholder="Material / Remarks"></textarea>
-<button onclick="alert('Restore Saved')">Save Restore</button>
+<div class="card">
+<h3>Travel KM</h3>
+<span id="travelKm">0</span>
 </div>
-
-<script>
-function show(id){
-document.querySelectorAll('.section').forEach(s=>s.style.display='none');
-document.getElementById(id).style.display='block';
-}
-navigator.geolocation.getCurrentPosition(function(p){
-document.getElementById('gps').innerHTML='📍 '+p.coords.latitude.toFixed(6)+'<br>📍 '+p.coords.longitude.toFixed(6);
-},function(){document.getElementById('gps').innerHTML='GPS Permission Denied';});
-
-document.getElementById('photo').onchange=function(){
-if(this.files.length) alert('Photo Selected: '+this.files[0].name);
-}
-function report(){alert('Daily Report module ready. Excel export can be added next.');}
-</script>
+</div>
+<div class="menu">
+<button onclick="openTravel()">🚗 Travel</button>
+<button onclick="openInstallation()">🛠 Installation</button>
+<button onclick="openSR()">📞 SR</button>
+<button onclick="openVisit()">🏢 Site Visit</button>
+<button onclick="openRestore()">🔧 Site Restore</button>
+<button onclick="openCamera()">📷 Upload Photo</button>
+<button onclick="showReport()">📊 Report</button>
+<button onclick="exportExcel()">📄 Export Excel</button>
+</div>
+<div id="content"></div>
+<script src="app.js"></script>
 </body>
 </html>
