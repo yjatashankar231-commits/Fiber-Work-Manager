@@ -60,6 +60,13 @@ color:white;
 <button>📷 Upload Photo</button>
 
 <button>📊 Daily Report</button>
-
+<script>
+navigator.geolocation.getCurrentPosition(function(position){
+document.querySelector(".card").innerHTML =
+"📍 Latitude: " + position.coords.latitude + "<br>📍 Longitude: " + position.coords.longitude;
+}, function(){
+document.querySelector(".card").innerHTML = "❌ GPS Permission Denied";
+});
+</script>
 </body>
 </html>
