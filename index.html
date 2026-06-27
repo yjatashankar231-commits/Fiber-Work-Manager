@@ -68,6 +68,7 @@ document.querySelector(".card").innerHTML =
 document.querySelector(".card").innerHTML = "❌ GPS Permission Denied";
 });
   function startTravel() {
+    
     navigator.geolocation.getCurrentPosition(function(pos){
         let lat = pos.coords.latitude;
         let lon = pos.coords.longitude;
@@ -79,6 +80,23 @@ document.querySelector(".card").innerHTML = "❌ GPS Permission Denied";
       localStorage.setItem("startTime", new Date().toLocaleString());
     });
 }
+  function finishTravel() {
+  navigator.geolocation.getCurrentPosition(function(pos){
+
+    let startLat = localStorage.getItem("lastLat");
+    let startLon = localStorage.getItem("lastLon");
+
+    let endLat = pos.coords.latitude;
+    let endLon = pos.coords.longitude;
+
+    alert(
+      "Travel Complete!\n\n" +
+      "Start: " + startLat + "," + startLon +
+      "\nEnd: " + endLat + "," + endLon
+    );
+
+  });
+  }
 </script>
 </body>
 </html>
