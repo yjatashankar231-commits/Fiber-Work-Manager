@@ -70,7 +70,15 @@ document.querySelector(".card").innerHTML = "❌ GPS Permission Denied";
 });
   function startTravel() {
     
-    navigator.geolocation.getCurrentPosition(function(pos){
+    navigator.geolocation.getCurrentPosition(function(pos) {
+    // your existing code
+}, function(err) {
+    alert("GPS Error: " + err.message);
+}, {
+    enableHighAccuracy: true,
+    timeout: 10000,
+    maximumAge: 0
+});
         let lat = pos.coords.latitude;
         let lon = pos.coords.longitude;
 
