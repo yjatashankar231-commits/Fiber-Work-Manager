@@ -60,6 +60,7 @@ color:white;
 <button onclick="uploadPhoto()">📷 Upload Photo</button>
 
 <button onclick="showReport()">📊 Daily Report</button>
+  <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
 <script>
 navigator.geolocation.getCurrentPosition(function(position){
 document.querySelector(".card").innerHTML =
@@ -110,6 +111,15 @@ document.querySelector(".card").innerHTML = "❌ GPS Permission Denied";
     "\n📍 Start GPS: " + startLat + "," + startLon
   );
   }
+  function uploadPhoto() {
+  document.getElementById("photoInput").click();
+}
+
+document.getElementById("photoInput").onchange = function () {
+  if (this.files.length > 0) {
+    alert("📷 Photo Selected: " + this.files[0].name);
+  }
+};
 </script>
 </body>
 </html>
