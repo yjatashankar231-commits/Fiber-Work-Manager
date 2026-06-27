@@ -4,130 +4,77 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fiber Work Manager</title>
-
 <style>
-body{
-font-family:Arial,sans-serif;
-background:#0d47a1;
-color:white;
-text-align:center;
-padding:20px;
-}
-
-h1{
-margin-top:20px;
-}
-
-.card{
-background:white;
-color:black;
-padding:15px;
-margin:15px;
-border-radius:15px;
-font-size:20px;
-font-weight:bold;
-}
-
-button{
-width:90%;
-padding:15px;
-margin:10px;
-font-size:18px;
-border:none;
-border-radius:12px;
-background:#2196F3;
-color:white;
-}
+body{font-family:Arial,sans-serif;background:#0d47a1;color:white;text-align:center;padding:20px}
+.card{background:#fff;color:#000;padding:15px;margin:15px;border-radius:15px;font-size:20px;font-weight:bold}
+button{width:90%;padding:15px;margin:10px;font-size:18px;border:none;border-radius:12px;background:#2196F3;color:#fff}
 </style>
 </head>
-
 <body>
 
 <h1>📡 Fiber Work Manager</h1>
 
-<div class="card">📍 GPS Location</div>
+<div class="card" id="gpsCard">📍 GPS Location</div>
 
 <button onclick="startTravel()">🚗 Travel</button>
-
-  <button onclick="finishTravel()">🛠 Installation</button>
-
+<button onclick="finishTravel()">🛠 Installation</button>
 <button>📞 SR</button>
-
 <button>🏢 Site Visit</button>
-
 <button>🔧 Site Restore</button>
-
 <button onclick="uploadPhoto()">📷 Upload Photo</button>
-
 <button onclick="showReport()">📊 Daily Report</button>
-  <input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
+
+<input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
+
 <script>
-navigator.geolocation.getCurrentPosition(function(position){
-document.querySelector(".card").innerHTML =
-"📍 Latitude: " + position.coords.latitude + "<br>📍 Longitude: " + position.coords.longitude;
-}, function(){
-document.querySelector(".card").innerHTML = "❌ GPS Permission Denied";
-});
-  function startTravel() {
-    
-    navigator.geolocation.getCurrentPosition(function(pos) {
-    // your existing code
-}, function(err) {
-    alert("GPS Error: " + err.message);
-}, {
-    enableHighAccuracy: true,
-    timeout: 10000,
-    maximumAge: 0
-});
-        let lat = pos.coords.latitude;
-        let lon = pos.coords.longitude;
-
-        localStorage.setItem("lastLat", lat);
-        localStorage.setItem("lastLon", lon);
-
-        alert("📍 Travel Started");
-      localStorage.setItem("startTime", new Date().toLocaleString());
-    });
+function updateGPS(){
+ navigator.geolocation.getCurrentPosition(function(pos){
+   document.getElementById("gpsCard").innerHTML=
+   "📍 Latitude: "+pos.coords.latitude+"<br>📍 Longitude: "+pos.coords.longitude;
+ },function(err){
+   document.getElementById("gpsCard").innerHTML="❌ GPS Error: "+err.message;
+ },{enableHighAccuracy:true,timeout:10000,maximumAge:0});
 }
-  function finishTravel() {
-  navigator.geolocation.getCurrentPosition(function(pos){
+updateGPS();
 
-    let startLat = localStorage.getItem("lastLat");
-    let startLon = localStorage.getItem("lastLon");
-
-    let endLat = pos.coords.latitude;
-    let endLon = pos.coords.longitude;
-    localStorage.setItem("endTime", new Date().toLocaleString());
-    alert(
-      "Travel Complete!\n\n" +
-      "Start: " + startLat + "," + startLon +
-      "\nEnd: " + endLat + "," + endLon
-    );
-
-  });
-  }
-  function showReport() {
-  let startTime = localStorage.getItem("startTime");
-  let endTime = localStorage.getItem("endTime");
-  let startLat = localStorage.getItem("lastLat");
-  let startLon = localStorage.getItem("lastLon");
-
-  alert(
-    "📊 Daily Report\n\n" +
-    "🕒 Start: " + startTime +
-    "\n🕒 End: " + endTime +
-    "\n📍 Start GPS: " + startLat + "," + startLon
-  );
-  }
-  function uploadPhoto() {
-  document.getElementById("photoInput").click();
+function startTravel(){
+ navigator.geolocation.getCurrentPosition(function(pos){
+   localStorage.setItem("lastLat",pos.coords.latitude);
+   localStorage.setItem("lastLon",pos.coords.longitude);
+   localStorage.setItem("startTime",new Date().toLocaleString());
+   alert("📍 Travel Started");
+ },function(err){
+   alert("GPS Error: "+err.message);
+ },{enableHighAccuracy:true,timeout:10000,maximumAge:0});
 }
 
-document.getElementById("photoInput").onchange = function () {
-  if (this.files.length > 0) {
-    alert("📷 Photo Selected: " + this.files[0].name);
-  }
-};
+function finishTravel(){
+ navigator.geolocation.getCurrentPosition(function(pos){
+   localStorage.setItem("endLat",pos.coords.latitude);
+   localStorage.setItem("endLon",pos.coords.longitude);
+   localStorage.setItem("endTime",new Date().toLocaleString());
+   alert("✅ Installation Complete");
+ });
+}
+
+function showReport(){
+ alert(
+ "📊 Daily Report\n\n"+
+ "🕒 Start: "+(localStorage.getItem("startTime")||"-")+
+ "\n🕒 End: "+(localStorage.getItem("endTime")||"-")+
+ "\n📍 Start GPS: "+(localStorage.getItem("lastLat")||"-")+","+(localStorage.getItem("lastLon")||"-")+
+ "\n📍 End GPS: "+(localStorage.getItem("endLat")||"-")+","+(localStorage.getItem("endLon")||"-")
+ );
+}
+
+function uploadPhoto(){
+ document.getElementById("photoInput").click();
+}
+document.getElementById("photoInput").onchange=function(){
+ if(this.files.length){
+   alert("📷 Photo Selected: "+this.files[0].name);
+ }
+}
 </script>
 </body>
 </html>
