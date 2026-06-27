@@ -119,3 +119,100 @@ Save SR
 `;
 
 }
+// ================= SAVE FUNCTIONS =================
+
+function saveTravel() {
+
+let row = {
+type: "Travel",
+date: new Date().toLocaleString(),
+from: document.getElementById("from").value,
+to: document.getElementById("to").value,
+km: document.getElementById("travelKmInput").value,
+remark: document.getElementById("travelRemark").value
+};
+
+records.push(row);
+
+localStorage.setItem("records", JSON.stringify(records));
+
+alert("🚗 Travel Saved");
+
+updateDashboard();
+
+}
+
+function saveInstallation() {
+
+let row = {
+type: "Installation",
+date: new Date().toLocaleString(),
+customer: customer.value,
+mobile: mobile.value,
+address: address.value,
+flat: flat.value,
+society: society.value,
+company: company.value,
+ra: ra.value,
+power: power.value,
+remark: remark.value
+};
+
+records.push(row);
+
+localStorage.setItem("records", JSON.stringify(records));
+
+alert("🛠 Installation Saved");
+
+updateDashboard();
+
+}
+
+function saveSR() {
+
+let row = {
+type: "SR",
+date: new Date().toLocaleString(),
+srNumber: srNumber.value,
+customer: customer.value,
+mobile: mobile.value,
+company: company.value,
+remark: remark.value
+};
+
+records.push(row);
+
+localStorage.setItem("records", JSON.stringify(records));
+
+alert("📞 SR Saved");
+
+updateDashboard();
+
+}
+
+// ================= DASHBOARD =================
+
+function updateDashboard() {
+
+document.getElementById("installationCount").innerHTML =
+records.filter(x => x.type === "Installation").length;
+
+document.getElementById("srCount").innerHTML =
+records.filter(x => x.type === "SR").length;
+
+document.getElementById("visitCount").innerHTML =
+records.filter(x => x.type === "Site Visit").length;
+
+let km = 0;
+
+records.forEach(r => {
+
+if (r.km) km += Number(r.km);
+
+});
+
+document.getElementById("travelKm").innerHTML = km;
+
+}
+
+updateDashboard();
