@@ -4,77 +4,325 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fiber Work Manager</title>
+
+<meta name="theme-color" content="#1565C0">
+
 <style>
-body{font-family:Arial,sans-serif;background:#0d47a1;color:white;text-align:center;padding:20px}
-.card{background:#fff;color:#000;padding:15px;margin:15px;border-radius:15px;font-size:20px;font-weight:bold}
-button{width:90%;padding:15px;margin:10px;font-size:18px;border:none;border-radius:12px;background:#2196F3;color:#fff}
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif;
+}
+
+body{
+background:#eef3f9;
+padding-bottom:90px;
+}
+
+.header{
+background:linear-gradient(135deg,#1565C0,#42A5F5);
+padding:20px;
+color:#fff;
+border-radius:0 0 25px 25px;
+text-align:center;
+box-shadow:0 5px 15px rgba(0,0,0,.2);
+}
+
+.header h1{
+font-size:26px;
+}
+
+.header p{
+margin-top:5px;
+font-size:15px;
+opacity:.9;
+}
+
+.dashboard{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:12px;
+padding:15px;
+}
+
+.card{
+background:#fff;
+border-radius:18px;
+padding:15px;
+text-align:center;
+box-shadow:0 3px 10px rgba(0,0,0,.15);
+}
+
+.card h2{
+font-size:28px;
+margin-bottom:5px;
+}
+
+.card p{
+font-size:15px;
+color:#666;
+}
+
+.section{
+padding:15px;
+}
+
+button{
+width:100%;
+padding:16px;
+margin-top:12px;
+border:none;
+border-radius:15px;
+font-size:18px;
+font-weight:bold;
+background:#1976D2;
+color:white;
+}
+
+button:active{
+transform:scale(.98);
+}
+
+.bottom{
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+background:white;
+display:flex;
+justify-content:space-around;
+padding:12px;
+box-shadow:0 -3px 10px rgba(0,0,0,.15);
+}
+
+.bottom div{
+text-align:center;
+font-size:14px;
+font-weight:bold;
+color:#1565C0;
+}
 </style>
 </head>
+
 <body>
 
+<div class="header">
 <h1>📡 Fiber Work Manager</h1>
+<p>Professional Field Engineer App</p>
+</div>
 
-<div class="card" id="gpsCard">📍 GPS Location</div>
+<div class="dashboard">
 
-<button onclick="startTravel()">🚗 Travel</button>
+<div class="card">
+<h2 id="installCount">0</h2>
+<p>Installation</p>
+</div>
+
+<div class="card">
+<h2 id="srCount">0</h2>
+<p>SR</p>
+</div>
+
+<div class="card">
+<h2 id="travelKm">0 KM</h2>
+<p>Travel</p>
+</div>
+
+<div class="card">
+<h2 id="todayWork">0</h2>
+<p>Today's Work</p>
+</div>
+
+</div>
+
+<div class="section">
+ <button onclick="startTravel()">🚗 Start Travel</button>
+
 <button onclick="finishTravel()">🛠 Installation</button>
-<button>📞 SR</button>
-<button>🏢 Site Visit</button>
-<button>🔧 Site Restore</button>
+
+<button onclick="saveSR()">📞 SR</button>
+
+<button onclick="saveVisit()">🏢 Site Visit</button>
+
+<button onclick="saveRestore()">🔧 Site Restore</button>
+
 <button onclick="uploadPhoto()">📷 Upload Photo</button>
+
 <button onclick="showReport()">📊 Daily Report</button>
 
-<input type="file" id="photoInput" accept="image/*" capture="environment" style="display:none">
+<div class="card" style="margin-top:20px">
+<h3>📍 Live GPS</h3>
+<p id="gpsCard">Waiting for GPS...</p>
+</div>
+
+<div class="bottom">
+
+<div onclick="startTravel()">
+🚗<br>Travel
+</div>
+
+<div onclick="finishTravel()">
+🛠<br>Install
+</div>
+
+<div onclick="uploadPhoto()">
+📷<br>Camera
+</div>
+
+<div onclick="showReport()">
+📊<br>Report
+</div>
+
+</div>
+
+<input
+type="file"
+id="photoInput"
+accept="image/*"
+capture="environment"
+style="display:none">
 
 <script>
+ // ===== GPS =====
 function updateGPS(){
  navigator.geolocation.getCurrentPosition(function(pos){
-   document.getElementById("gpsCard").innerHTML=
-   "📍 Latitude: "+pos.coords.latitude+"<br>📍 Longitude: "+pos.coords.longitude;
- },function(err){
-   document.getElementById("gpsCard").innerHTML="❌ GPS Error: "+err.message;
- },{enableHighAccuracy:true,timeout:10000,maximumAge:0});
+   document.getElementById("gpsCard").innerHTML =
+   "📍 " + pos.coords.latitude.toFixed(6) +
+   "<br>📍 " + pos.coords.longitude.toFixed(6);
+ });
 }
 updateGPS();
 
+// ===== Travel Start =====
 function startTravel(){
  navigator.geolocation.getCurrentPosition(function(pos){
-   localStorage.setItem("lastLat",pos.coords.latitude);
-   localStorage.setItem("lastLon",pos.coords.longitude);
+
+   localStorage.setItem("startLat",pos.coords.latitude);
+   localStorage.setItem("startLon",pos.coords.longitude);
    localStorage.setItem("startTime",new Date().toLocaleString());
-   alert("📍 Travel Started");
- },function(err){
-   alert("GPS Error: "+err.message);
- },{enableHighAccuracy:true,timeout:10000,maximumAge:0});
-}
 
-function finishTravel(){
- navigator.geolocation.getCurrentPosition(function(pos){
-   localStorage.setItem("endLat",pos.coords.latitude);
-   localStorage.setItem("endLon",pos.coords.longitude);
-   localStorage.setItem("endTime",new Date().toLocaleString());
-   alert("✅ Installation Complete");
+   alert("🚗 Travel Started");
+
  });
+
 }
 
-function showReport(){
- alert(
- "📊 Daily Report\n\n"+
- "🕒 Start: "+(localStorage.getItem("startTime")||"-")+
- "\n🕒 End: "+(localStorage.getItem("endTime")||"-")+
- "\n📍 Start GPS: "+(localStorage.getItem("lastLat")||"-")+","+(localStorage.getItem("lastLon")||"-")+
- "\n📍 End GPS: "+(localStorage.getItem("endLat")||"-")+","+(localStorage.getItem("endLon")||"-")
- );
+// ===== Installation =====
+function finishTravel(){
+
+ navigator.geolocation.getCurrentPosition(function(pos){
+
+ localStorage.setItem("endLat",pos.coords.latitude);
+ localStorage.setItem("endLon",pos.coords.longitude);
+ localStorage.setItem("endTime",new Date().toLocaleString());
+
+ let total=Number(localStorage.getItem("install"))||0;
+ total++;
+
+ localStorage.setItem("install",total);
+
+ document.getElementById("installCount").innerHTML=total;
+
+ alert("✅ Installation Completed");
+
+ });
+
 }
 
+// ===== SR =====
+function saveSR(){
+
+ let sr=Number(localStorage.getItem("sr"))||0;
+
+ sr++;
+
+ localStorage.setItem("sr",sr);
+
+ document.getElementById("srCount").innerHTML=sr;
+
+ alert("📞 SR Saved");
+
+}
+ // ===== Site Visit =====
+function saveVisit(){
+
+let visit=Number(localStorage.getItem("visit"))||0;
+
+visit++;
+
+localStorage.setItem("visit",visit);
+
+alert("🏢 Site Visit Saved");
+
+}
+
+// ===== Site Restore =====
+function saveRestore(){
+
+let restore=Number(localStorage.getItem("restore"))||0;
+
+restore++;
+
+localStorage.setItem("restore",restore);
+
+alert("🔧 Site Restore Saved");
+
+}
+
+// ===== Upload Photo =====
 function uploadPhoto(){
- document.getElementById("photoInput").click();
+document.getElementById("photoInput").click();
 }
+
 document.getElementById("photoInput").onchange=function(){
- if(this.files.length){
-   alert("📷 Photo Selected: "+this.files[0].name);
- }
+
+if(this.files.length){
+
+alert("📷 Photo Uploaded Successfully");
+
 }
+
+};
+
+// ===== Daily Report =====
+function showReport(){
+
+alert(
+
+"📊 DAILY REPORT\n\n"+
+
+"🛠 Installation : "+(localStorage.getItem("install")||0)+
+
+"\n📞 SR : "+(localStorage.getItem("sr")||0)+
+
+"\n🏢 Site Visit : "+(localStorage.getItem("visit")||0)+
+
+"\n🔧 Site Restore : "+(localStorage.getItem("restore")||0)+
+
+"\n\n🕒 Start : "+(localStorage.getItem("startTime")||"-")+
+
+"\n🕒 End : "+(localStorage.getItem("endTime")||"-")+
+
+"\n\n📍 Start GPS : "+(localStorage.getItem("startLat")||"-")+","+ (localStorage.getItem("startLon")||"-")+
+
+"\n📍 End GPS : "+(localStorage.getItem("endLat")||"-")+","+ (localStorage.getItem("endLon")||"-")
+
+);
+
+}
+
+window.onload=function(){
+
+document.getElementById("installCount").innerHTML=localStorage.getItem("install")||0;
+
+document.getElementById("srCount").innerHTML=localStorage.getItem("sr")||0;
+
+updateGPS();
+
+};
+
 </script>
+
 </body>
 </html>
