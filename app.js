@@ -216,3 +216,238 @@ document.getElementById("travelKm").innerHTML = km;
 }
 
 updateDashboard();
+// ================= GPS =================
+
+function getCurrentLocation(callback){
+
+if(!navigator.geolocation){
+alert("GPS Not Supported");
+return;
+}
+
+navigator.geolocation.getCurrentPosition(function(pos){
+
+callback(
+pos.coords.latitude,
+pos.coords.longitude
+);
+
+},function(err){
+
+alert("GPS Error : "+err.message);
+
+},{
+enableHighAccuracy:true,
+timeout:10000,
+maximumAge:0
+});
+
+}
+
+// ================= CAMERA =================
+
+function openCamera(){
+
+let input=document.createElement("input");
+
+input.type="file";
+
+input.accept="image/*";
+
+input.capture="environment";
+
+input.onchange=function(){
+
+if(this.files.length){
+
+alert("📷 Photo Selected : "+this.files[0].name);
+
+}
+
+}
+
+input.click();
+
+}
+
+// ================= SITE VISIT =================
+
+function openVisit(){
+
+document.getElementById("content").innerHTML=`
+
+<div class="form-card">
+
+<h2>🏢 Site Visit</h2>
+
+<input id="siteName" placeholder="Site Name">
+
+<input id="engineer" placeholder="Engineer Name">
+
+<input id="purpose" placeholder="Purpose">
+
+<textarea id="visitRemark"
+placeholder="Remarks"></textarea>
+
+<button class="save-btn"
+onclick="saveVisit()">
+
+Save Visit
+
+</button>
+
+</div>
+
+`;
+
+}
+
+function saveVisit(){
+
+records.push({
+
+type:"Site Visit",
+
+date:new Date().toLocaleString(),
+
+site:siteName.value,
+
+engineer:engineer.value,
+
+purpose:purpose.value,
+
+remark:visitRemark.value
+
+});
+
+localStorage.setItem("records",
+JSON.stringify(records));
+
+alert("🏢 Site Visit Saved");
+
+updateDashboard();
+
+}
+
+// ================= SITE RESTORE =================
+
+function openRestore(){
+
+document.getElementById("content").innerHTML=`
+
+<div class="form-card">
+
+<h2>🔧 Site Restore</h2>
+
+<input id="restoreSite"
+placeholder="Site Name">
+
+<input id="restoreCompany"
+placeholder="ISP Company">
+
+<input id="fault"
+placeholder="Fault">
+
+<textarea id="restoreRemark"
+placeholder="Remarks"></textarea>
+
+<button class="save-btn"
+onclick="saveRestore()">
+
+Save Restore
+
+</button>
+
+</div>
+
+`;
+
+}
+
+function saveRestore(){
+
+records.push({
+
+type:"Site Restore",
+
+date:new Date().toLocaleString(),
+
+site:restoreSite.value,
+
+company:restoreCompany.value,
+
+fault:fault.value,
+
+remark:restoreRemark.value
+
+});
+
+localStorage.setItem("records",
+JSON.stringify(records));
+
+alert("🔧 Site Restore Saved");
+
+updateDashboard();
+
+}
+
+// ================= REPORT =================
+
+function showReport(){
+
+let html="<h2>Daily Report</h2>";
+
+records.forEach(function(r){
+
+html+=`
+
+<div class="card">
+
+<b>${r.type}</b><br>
+
+${r.customer||r.site||""}<br>
+
+${r.company||""}<br>
+
+${r.date}
+
+</div>
+
+`;
+
+});
+
+document.getElementById("content").innerHTML=html;
+
+}
+
+// ================= EXPORT CSV =================
+
+function exportExcel(){
+
+let csv="Type,Date,Customer,Company,Site,KM\\n";
+
+records.forEach(function(r){
+
+csv+=`${r.type},
+${r.date},
+${r.customer||""},
+${r.company||""},
+${r.site||""},
+${r.km||""}
+\\n`;
+
+});
+
+let blob=new Blob([csv],
+{type:"text/csv"});
+
+let a=document.createElement("a");
+
+a.href=URL.createObjectURL(blob);
+
+a.download="Fiber_Work_Report.csv";
+
+a.click();
+
+}
