@@ -1,106 +1,82 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Service & Installation Log System</title>
-    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Fiber Work Manager</title>
+<style>
+body{margin:0;font-family:Arial,sans-serif;background:#eef3ff}
+header{background:#1565c0;color:#fff;padding:16px;text-align:center;font-size:22px;font-weight:bold}
+.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;padding:14px}
+.card{background:#fff;border-radius:16px;padding:20px;text-align:center;box-shadow:0 3px 10px rgba(0,0,0,.12);cursor:pointer}
+#form{margin:14px;background:#fff;border-radius:16px;padding:15px;box-shadow:0 3px 10px rgba(0,0,0,.12)}
+input,select,textarea,button{width:100%;padding:10px;margin:6px 0;border-radius:10px;border:1px solid #ccc;box-sizing:border-box}
+button{background:#1565c0;color:#fff;border:none}
+#list{padding:14px}
+</style>
 </head>
-<body class="bg-gray-50 font-sans text-gray-800">
+<body>
+<header>📡 Fiber Work Manager</header>
 
-    <div class="flex h-screen overflow-hidden">
-        
-        <div class="w-64 bg-slate-900 text-white flex flex-col justify-between hidden md:flex">
-            <div class="p-5">
-                <h1 class="text-xl font-bold tracking-wider flex items-center gap-2">
-                    <i class="fa-solid fa-network-wired text-indigo-400"></i> FieldOps Pro
-                </h1>
-                <nav class="mt-10 space-y-3">
-                    <a href="#" class="flex items-center gap-3 px-4 py-3 bg-indigo-600 text-white rounded-lg transition">
-                        <i class="fa-solid fa-pen-to-square"></i> Manual Entry
-                    </a>
-                </nav>
-            </div>
-            <div class="p-5 border-t border-slate-800 text-xs text-slate-400">
-                Logged in as Field Executive
-            </div>
-        </div>
+<div class="grid">
+<div class="card">🚗<br>Travel</div>
+<div class="card">🛠<br>Installation</div>
+<div class="card">🔧<br>SR</div>
+<div class="card">📍<br>Site Visit</div>
+<div class="card">🏗<br>Site Restore</div>
+<div class="card" onclick="exportCSV()">📊<br>Export Excel</div>
+</div>
 
-        <div class="flex-1 flex flex-col overflow-y-auto">
-            
-            <header class="bg-white border-b border-gray-200 px-6 py-4 flex justify-between items-center sticky top-0 z-10">
-                <h2 class="text-xl font-semibold text-gray-800">New Activity Log Entry</h2>
-                <button onclick="exportToExcel()" class="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-lg font-medium flex items-center gap-2 shadow transition cursor-pointer">
-                    <i class="fa-solid fa-file-excel"></i> Export All to Excel
-                </button>
-            </header>
+<div id="form">
+<select id="type">
+<option>Installation</option>
+<option>SR</option>
+<option>Site Visit</option>
+<option>Site Restore</option>
+<option>Travel</option>
+</select>
+<input id="customer" placeholder="Customer Name">
+<input id="mobile" placeholder="Mobile Number">
+<input id="company" placeholder="ISP">
+<input id="site" placeholder="Site / Address">
+<input id="km" placeholder="Travel KM">
+<input type="file" id="photo" accept="image/*">
+<textarea id="remark" placeholder="Remarks"></textarea>
+<button onclick="saveEntry()">💾 Save Entry</button>
+</div>
 
-            <main class="p-6 max-w-5xl w-full mx-auto space-y-6">
-                
-                <form id="logForm" onsubmit="handleFormSubmit(event)" class="bg-white rounded-xl shadow-sm border border-gray-100 p-6 space-y-6">
-                    
-                    <div>
-                        <h3 class="text-md font-semibold text-indigo-600 border-b border-gray-100 pb-2 mb-4">
-                            <i class="fa-solid fa-briefcase mr-1"></i> 1. Work & Company Details
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Installation Company Name</label>
-                                <input type="text" id="installCompany" required placeholder="Enter company doing installation" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Complaint/Client Company Name</label>
-                                <input type="text" id="complaintCompany" required placeholder="Enter client/complaint company" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                        </div>
-                    </div>
+<div id="list"></div>
 
-                    <div>
-                        <h3 class="text-md font-semibold text-indigo-600 border-b border-gray-100 pb-2 mb-4">
-                            <i class="fa-solid fa-file-lines mr-1"></i> 2. Manual Write-ups
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Installation Manual Notes / Details</label>
-                                <textarea id="installManual" rows="4" required placeholder="Type all installation steps, hardware used, or manual details here..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Site Restore Manual Notes / Details</label>
-                                <textarea id="restoreManual" rows="4" required placeholder="Type site restoration process, link status, or manual logs here..." class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"></textarea>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h3 class="text-md font-semibold text-indigo-600 border-b border-gray-100 pb-2 mb-4">
-                            <i class="fa-solid fa-route mr-1"></i> 3. Travel Log (Side to Side)
-                        </h3>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">From (Start Side/Location)</label>
-                                <input type="text" id="travelFrom" required placeholder="e.g., Side A / Office" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">To (Destination Side/Location)</label>
-                                <input type="text" id="travelTo" required placeholder="e.g., Side B / Client Site" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500">
-                            </div>
-                            <div>
-                                <label class="block text-sm font-medium text-gray-700 mb-1">Distance Traveled (Kilometers)</label>
-                                <div class="relative">
-                                    <input type="number" id="distanceKm" step="0.1" required placeholder="0.0" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 pr-10">
-                                    <span class="absolute right-3 top-2.5 text-gray-400 text-sm font-medium">KM</span>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div>
-                        <h3 class="text-md font-semibold text-indigo-600 border-b border-gray-100 pb-2 mb-4">
-                            <i class="fa-solid fa-camera mr-1"></i> 4. Media Upload
-                        </h3>
-                        <div class="w-full">
-                            <label class="block text-sm font-medium text-gray-700 mb-1">Upload Site / Work Photos</label>
-                            <div class="border-2 border-dashed border-gray-300 rounded-xl p-6 text-center hover:bg-gray-50 transition relative">
-                                <input type="file" id="sitePhotos" multiple accept="image/*" class="absolute inset-0 w
+<script>
+let data=JSON.parse(localStorage.getItem("workData")||"[]");
+render();
+function saveEntry(){
+data.push({
+date:new Date().toLocaleString(),
+type:type.value,
+customer:customer.value,
+mobile:mobile.value,
+company:company.value,
+site:site.value,
+km:km.value,
+remark:remark.value,
+photo:photo.files.length?photo.files[0].name:""
+});
+localStorage.setItem("workData",JSON.stringify(data));
+alert("Saved");
+render();
+}
+function render(){
+list.innerHTML="<h3>Saved Entries</h3>"+(data.map((r,i)=>`${i+1}. ${r.date} | ${r.type} | ${r.customer} | ${r.company}<br>`).join("")||"No Data");
+}
+function exportCSV(){
+let csv="Date,Type,Customer,Mobile,ISP,Site,KM,Photo,Remark\n";
+data.forEach(r=>csv+=`"${r.date}","${r.type}","${r.customer}","${r.mobile}","${r.company}","${r.site}","${r.km}","${r.photo}","${r.remark}"\n`);
+let a=document.createElement("a");
+a.href=URL.createObjectURL(new Blob([csv],{type:"text/csv"}));
+a.download="Fiber_Report.csv";
+a.click();
+}
+</script>
+</body>
+</html>
